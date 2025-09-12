@@ -1,0 +1,50 @@
+#pragma once
+
+/*
+ * This header file is a part of 
+ * qutil.c - Simple utilities library in C23 with no unnecessary overhead and implicit memory allocations. (MIT License)
+ */
+
+/**
+ * @file other.h
+ * @brief Some helpful types. 
+ * @ingroup PublicAPI
+ */
+
+
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+/**
+ * @brief Contain static string pointer
+ * for use in `option` and `result` types
+ */
+typedef const char* static_string; 
+
+/**
+ * @brief Contain constant `void*`
+ * for use in `option` and `result` types
+ */
+typedef void* p_void;
+
+[[noreturn]]
+static inline void abort_with_error(const char err[static 1]) {
+  fprintf(stderr, "Abort with error message: %s\n", err);
+  abort();
+}
+
+[[noreturn]]
+static inline void abort_with_error_at(const char msg[static 1], const char file[static 1], size_t line) { // todo
+  fprintf(stderr, msg, file, line);
+  abort();
+}
+
+/**
+ * @brief Macros for generate structure for convenient array operating 
+ */
+#define ARRAY_CONTAINER(TYPE) typedef struct TYPE##_array { const size_t len; TYPE*const data; } TYPE##_array;
+
+ARRAY_CONTAINER(int)
+ARRAY_CONTAINER(double)
+ARRAY_CONTAINER(char)
