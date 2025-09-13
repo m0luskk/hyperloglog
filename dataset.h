@@ -1,5 +1,6 @@
 
 #include <stddef.h>
+#include <stdint.h>
 const char* small_names_dataset[] = { // 128 elements at all and 128/2 from it is unique
   "Isabella", "Isabella",
   "Sophia", "Sophia",
@@ -556,4 +557,17 @@ const char* large_names_dataset[] = {
 
 const size_t LARGE_DATASET_SIZE = sizeof(large_names_dataset) / sizeof(large_names_dataset[0]);
 const size_t LARGE_DATASET_UNIQUE_COUNT = 347;
+
+uint32_t int_dataset[50] = { // True cardinality = 35
+    0x7A4B3C2D, 0x1F0E5A6B, 0x8C9DA0B1, 0x2345C6D7, 0xE8F90123,
+    0x456789AB, 0xCDEF1234, 0x56789ABC, 0xDEF01234, 0x9ABCDEF0,
+    0x12345678, 0x90ABCDEF, 0x87654321, 0xFEDCBA90, 0x13579BDF,
+    0x2468ACE0, 0x3579BDF1, 0x468ACE02, 0x579BDF13, 0x68ACE024,
+    0x79BDF135, 0x8ACE0246, 0x9BDF1357, 0xACE02468, 0xBDF13579,
+    0xCE02468A, 0xDF13579B, 0xE02468AC, 0xF13579BD, 0x02468ACE,
+    0x13579BDF, 0x7A4B3C2D, 0x8C9DA0B1, 0x2345C6D7, 0x456789AB,
+    0xCDEF1234, 0xDEF01234, 0x12345678, 0x87654321, 0x13579BDF,
+    0x2468ACE0, 0x468ACE02, 0x68ACE024, 0x8ACE0246, 0xACE02468,
+    0xCE02468A, 0xE02468AC, 0x02468ACE, 0x7A4B3C2D, 0xE8F90123
+};
 

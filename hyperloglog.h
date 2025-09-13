@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "qoption.h"
+#include "murmur.h"
 
 typedef struct {
   const size_t _initial_bits;
@@ -17,16 +18,13 @@ DECLARE_OPTION(hash_t)
 DECLARE_OPTION(hll)
 
 
-static inline struct option_hash_t string_hash(const char str[static 1]) {
+static inline struct option_hash_t hash(size_t size, const char str[static size]) {
     if (str == nullptr || str[0] == '\0') return option_hash_t_none();
-    
-    hash_t hash = 14695981039346656037ULL;
-    while (*str) {
-        hash ^= (unsigned char)(*str);
-        hash *= 1099511628211ULL;
-        str++;
-    }
-    return option_hash_t_value(hash);
+
+    hash_t hash[2] = {};
+    MurmurHash3_x86_128(str, size, 42, hash);
+
+    return option_hash_t_value(hash[0]);
 }
 
 static inline struct option_hll hyperloglog_create(size_t initial_bits) {
@@ -48,15 +46,14 @@ static inline void hyperloglog_destroy(hll* hll) {
   free(hll->_registers);
 }
 
-// #define PRINTS
-static inline void hyperloglog_add_element(hll* hll, const char str_value[static 1]) {
-  auto hash_opt  = string_hash(str_value);
+static inline void hyperloglog_add_element(hll* hll, size_t value_size, const void* value) {
+  auto hash_opt  = hash(value_size, value);
   if (!hash_opt.has_value) return;
   hash_t hash = option_hash_t_unwrap(hash_opt);
   
   hash_t reg_idx = hash >> (sizeof(hash_t) * 8 - hll->_initial_bits);
 
-  hash_t shifted = hash << hll->_initial_bits; // exclude initial bits
+  hash_t shifted = hash << hll->_initial_bits;
   hash_t leftmost_pos = 0;
   if (shifted == 0) {
       leftmost_pos = (sizeof(hash_t) * 8 - hll->_initial_bits) + 1;
